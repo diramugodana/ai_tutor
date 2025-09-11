@@ -1,0 +1,377 @@
+[
+  {
+    "chapter": "1",
+    "chapter_root": "1",
+    "type": "content",
+    "text": "Introduction to Biology: What is Biology? Branches of Biology; Importance of Biology; Characteristics of Living Things; Comparison between plants and animals."
+  },
+  {
+    "chapter": "2",
+    "chapter_root": "2",
+    "type": "content",
+    "text": "Classification I: (a) Introduction (b) The Magnifying Lens (a) External Features of Plants and Animals (b) The Diversity of Living Organisms (a) What is classification? (b) Need for Classification (a) Historical Background of Classification (b) Taxonomic Units of Classification; Scientific Naming of Living Organisms."
+  },
+  {
+    "chapter": "3",
+    "chapter_root": "3",
+    "type": "revision",
+    "text": [
+      "The Cell",
+      "Introduction",
+      "The Light Microscope",
+      "(a) Handling and care of a microscope",
+      "(b) Using the Microscope",
+      "(c) Magnification",
+      "(d) Cell Structure as seen Under Light Microscope",
+      "(a) The Electron Microscope",
+      "(b) The Cell Structure as seen under the Electron Microscope",
+      "Preparation of Temporary Slides",
+      "Estimation of Cell Size"
+    ]
+  },
+  {
+    "chapter": "4",
+    "chapter_root": "4",
+    "type": "content",
+    "text": "Cell Specialisation; Tissues, Organs and Organ Systems. Cell Physiology: Introduction; Cell Membrane Structure and Properties; (a) Diffusion (b) Osmosis (c) Water Relations in Plants (d) Active Transport."
+  },
+  {
+    "chapter": "5",
+    "chapter_root": "5",
+    "type": "content",
+    "text": "Nutrition in Plants and Animals: Introduction; Autotrophism; External and Internal Structure of a Leaf; Adaptations for Photosynthesis; The Process of Photosynthesis; Factors Affecting Rate of Photosynthesis; Biomolecules: (a) Carbohydrates (b) Lipids (c) Proteins (d) Enzymes; Nutrition in Animals; Digestive System and Processing along the Digestive Tract: Stomach, Duodenum, Ileum; Caecum and Appendix; Assimilation; Vitamins and Mineral Salts; Factors Determining Energy Requirements in Humans."
+  },
+  {
+    "chapter": "1.1",
+    "chapter_root": "1",
+    "type": "content",
+    "text": "In the primary school level you learnt about animals, plants and environment ... Biology is the branch of science that deals with the study of living things ... the role human beings play in shaping their environment."
+  },
+  {
+    "chapter": "1.2",
+    "chapter_root": "1",
+    "type": "content",
+    "text": "Biology is divided into two main branches: botany and zoology ... examples of sub-branches: ecology, genetics, entomology, parasitology ... Study Question 1: Name at least six other smaller branches of biology."
+  },
+  {
+    "chapter": "1.3",
+    "chapter_root": "1",
+    "type": "content",
+    "text": "Uses of biological knowledge: solving environmental problems; careers (medicine, agriculture, public health, veterinary, animal husbandry, horticulture, dentistry); scientific skills (observing, identifying, recording, classifying, measuring, analysing, evaluating); international cooperation examples ... Study Question 2: List five professional occupations that require the study of biology."
+  },
+  {
+    "chapter": "1.4",
+    "chapter_root": "1",
+    "type": "content",
+    "text": "Practical Activity 1: To observe living and non-living things ... Requirements ... Procedure ... Summary of characteristics: nutrition, respiration, gaseous exchange, excretion, growth and development, reproduction, irritability, movement ... Collection of Specimens apparatus and precautions ... Activity 2 and Practical Activity 3."
+  },
+  {
+    "chapter": "1.5",
+    "chapter_root": "1",
+    "type": "content",
+    "text": "Table 1.2: Comparison between plants and animals ... (a) chlorophyll/food-making; (b) cell walls; (c) response speed; (d) locomotion; (e) excretory organs."
+  },
+  {
+    "chapter": "1.5",
+    "chapter_root": "1",
+    "type": "revision",
+    "text": [
+      "1. (a) What is meant by the term Biology? (b) List two branches of biology and for each, give a definition.",
+      "2. State four reasons why biology should be studied.",
+      "3. List four differences between a plant and an animal.",
+      "4. A motor vehicle is able to move and break down fuel to carbon (IV) oxide (carbon dioxide) and water, yet it is not classified as a living thing. List other characteristics of living things that are not shown by a motor vehicle."
+    ]
+  },
+  {
+    "chapter": "2.1",
+    "chapter_root": "2",
+    "type": "content",
+    "text": "Living things (organisms) show diverse characteristics that enable grouping ... many organisms described; new ones still being discovered."
+  },
+  [
+    {
+      "chapter": "2.1",
+      "chapter_root": "2",
+      "type": "content",
+      "text": "You recall that a magnifying lens is used for enlarging small objects. Figure 2.1 shows a hand lens. In order to use the hand lens to magnify an object, place the object on the bench and move the hand lens from the object towards the eye until an enlarged image is seen. If a hand lens is used to make a drawing, the lens magnification does not determine the drawing’s magnification. Drawing magnification = length of the drawing ÷ length of the object. Figure 2.2 shows how this formula is applied."
+    },
+    {
+      "chapter": "2.2",
+      "chapter_root": "2",
+      "type": "content",
+      "text": "Study Question 1: What are the common external features observed in plants and animals? From your answers, you notice varied external features. External features of plants: (i) Rhizoids in moss (ii) Fronds in ferns (iii) Roots, stems, leaves, flowers, seeds, fruits, cones in higher plants. External features of animals: (i) Tentacles in hydra (ii) Feathers in birds (iii) Shells in snails (iv) Wings in birds (v) Fur and hair in mammals (vi) Scales and fins in fish (vii) Proglottids in tapeworm (viii) Mammary glands in mammals (ix) Limbs in insects (x) Body pigmentation. Practical Activity 1: Collect and observe animal specimens (equipment, procedure, safety). Practical Activity 2: Collect and observe plant specimens (roots, stems, leaf margins and venation; draw and compute magnification for each diagram)."
+    },
+    {
+      "chapter": "2.2",
+      "chapter_root": "2",
+      "type": "content",
+      "text": "Before defining classification, review the organisms collected in activities 1 and 2 and compare with those shown in figure 2.3 to appreciate why classification is necessary."
+    },
+    {
+      "chapter": "2.3",
+      "chapter_root": "2",
+      "type": "content",
+      "text": "Classification is the grouping of living organisms according to structure and evolutionary relationships (phylogeny). A group is a taxon (plural: taxa). The science of classification is taxonomy; its practitioners are taxonomists."
+    },
+    {
+      "chapter": "2.3",
+      "chapter_root": "2",
+      "type": "content",
+      "text": "Why classification is necessary: • Correct identification and referencing • Groups organisms with similar characteristics, separates those with different features • Arranges biological information orderly • Helps us understand evolutionary relationships between organisms."
+    },
+    {
+      "chapter": "2.4",
+      "chapter_root": "2",
+      "type": "content",
+      "text": "Historically, artificial classification used few observable traits (e.g., Aristotle). Modern classification uses evolutionary relationships from common ancestry. Carolus Linnaeus (1707–1778) pioneered modern classification. (Figure 2.3 illustrates organismal diversity.)"
+    },
+    {
+      "chapter": "2.4",
+      "chapter_root": "2",
+      "type": "content",
+      "text": "Taxonomic hierarchy and five kingdoms. Kingdom → Phylum/Division → Class → Order → Family → Genus → Species. Five kingdoms: Monera (bacteria), Protoctista (algae, protozoa), Fungi (moulds, yeasts, mushrooms), Plantae (mosses, ferns, maize, pea, pine, Meru oak), Animalia (hydra, tapeworms, bees, humans). As we go down the hierarchy, groups contain fewer organisms but with greater similarity. A species is the smallest unit; members interbreed to produce fertile offspring. Subspecific variation (varieties, races, strains) may be recognised."
+    },
+    {
+      "chapter": "2.5",
+      "chapter_root": "2",
+      "type": "content",
+      "text": "Binomial nomenclature (Linnaeus, 18th c.) uses Latinised genus + species names (e.g., Homo sapiens, Zea mays). Rules: genus capitalised, species lower-case; italicised in print (underlined when handwritten); sometimes includes the describing scientist (e.g., Balanus balanoides Linnaeus). Reasons for Latin: universality and clarity across local languages. Practical Activity: Naming organisms using local/English/scientific names; sources for verification (teacher, texts, museums, herbarium, research institutes)."
+    },
+    {
+      "chapter": "2.5",
+      "chapter_root": "2",
+      "type": "revision",
+      "text": [
+        "1. The scientific name for the black jack plant is Bidens pilosa. Which taxonomic group does the name pilosa refer to?",
+        "2. Define the term species. Explain why a leopard and a lion cannot breed yet they belong to the same genus.",
+        "3. List the differences between plants and animals.",
+        "4. What is the relationship between a genus and a species?",
+        "5. (a) What is the name given to the double-naming system of living organisms? (b) Give reasons why scientific names are given in Latin.",
+        "6. Distinguish between: (a) Common names and scientific names. (b) Taxonomy and taxon."
+      ]
+    },
+    {
+      "chapter": "3.1",
+      "chapter_root": "3",
+      "type": "content",
+      "text": "Cells are the basic units of life. Some organisms are unicellular (e.g., amoeba); others are multicellular (e.g., pea, cow). History of microscopy: Jansen (c.1650) compound microscope; Hooke (1665) observed cells; Leeuwenhoek (1650–1700) improved magnification and observed nuclei/bacteria; 1930s electron microscope revealed internal cell structures."
+    },
+    {
+      "chapter": "3.2",
+      "chapter_root": "3",
+      "type": "content",
+      "text": "The light microscope (uses light for illumination) reveals fine details not visible to the eye or hand lens. Know its parts, care and use (see fig. 3.1 and table 3.1). Handle carefully; it is delicate and expensive."
+    },
+    {
+      "chapter": "3.3",
+      "chapter_root": "3",
+      "type": "content",
+      "text": "Parts and functions of a light microscope and safe handling rules; step-by-step procedure to focus under low/medium/high power; compute total magnification = eye-piece × objective. Practical Activity: identify parts, draw and label, calculate magnification."
+    },
+    {
+      "chapter": "3.3",
+      "chapter_root": "3",
+      "type": "content",
+      "text": "Cell structures visible under the light microscope: in plants—cell wall, cell membrane, cytoplasm, nucleus, vacuole, chloroplasts; in animals—cell membrane, cytoplasm, nucleus, small vacuoles. Organelles perform specific functions."
+    },
+    {
+      "chapter": "3.4",
+      "chapter_root": "3",
+      "type": "content",
+      "text": "Electron microscope magnifies up to ~500,000× with high resolving power; uses electrons instead of light. Reveals ultrastructure (e.g., membranes, organelles)."
+    },
+    {
+      "chapter": "3.4",
+      "chapter_root": "3",
+      "type": "content",
+      "text": "Overview of cell ultrastructure and organelles: membrane (trilaminar lipoprotein; selectively permeable), cytoplasm (site of reactions; streaming; inclusions), mitochondria (cristae; sites of respiration), endoplasmic reticulum (rough with ribosomes → protein transport; smooth → lipid transport), ribosomes (protein synthesis), lysosomes (lytic enzymes), Golgi apparatus (packaging/secretion), centrioles (cell division; absent in plants), chloroplasts (photosynthesis; grana), vacuoles (cell sap; storage; turgor), cell wall (cellulose; support; fully permeable), nucleus (membrane with pores; nucleoplasm; nucleolus; chromatin; control center). Include comparisons of plant vs animal cells."
+    },
+    {
+      "chapter": "3.5",
+      "chapter_root": "3",
+      "type": "content",
+      "text": "Preparing and observing temporary slides (onion epidermis): apparatus, steps to make wet mount and stained mount; estimating field of view diameter with a ruler; calculating cell size from field of view and count. Differences between plant and animal cells (Table 3.3)."
+    },
+    {
+      "chapter": "3.6",
+      "chapter_root": "3",
+      "type": "content",
+      "text": "Estimating cell size: unit conversions (mm ↔ μm ↔ nm); count cells across field of view; Cell Diameter = (Diameter of field of view in μm) ÷ (number of cells across). Study Question: limitations of the method; other useful dimensions for irregular cells."
+    },
+    {
+      "chapter": "3.7",
+      "chapter_root": "3",
+      "type": "content",
+      "text": "Cell specialisation, tissues, organs and organ systems. Examples: specialised cells (root hair, sperm); animal tissues (epithelial, muscle, blood, connective); plant tissues (epidermal, palisade, parenchyma, vascular). Revision Exercise covering focusing rules, magnification, definitions (cell, organelle, tissue, organ, system), organelle abundance in active tissues, plant vs animal cell comparison, organelles seen only with EM."
+    },
+    {
+      "chapter": "3.7",
+      "chapter_root": "3",
+      "type": "revision",
+      "text": [
+        "1. Explain why only the fine adjustment knob should be used when focusing a specimen using the high power objective lens of the light microscope.",
+        "2. A drawing of 5 cm in length was made of a beetle whose actual length was 1 cm. Calculate the magnification of the drawing.",
+        "3. What is: (a) a cell? (b) an organelle?",
+        "4. Define the following: (i) a tissue (ii) an organ (iii) an organ system.",
+        "5. If the nucleus of a cell is removed, what would happen to that cell? Why?",
+        "6. Name the organelles that would be found in large numbers in cells of a: (i) rapidly respiring tissue (ii) secretory gland. In each case, give a reason.",
+        "7. Compare the structure of plant and animal cells.",
+        "8. Name the cell organelles that can be observed only under an electron microscope."
+      ]
+    },    
+    {
+      "chapter": "4.1",
+      "chapter_root": "4",
+      "type": "content",
+      "text": "Cell physiology studies the functions of cell structures (photosynthesis in chloroplasts; respiration in mitochondria; protein synthesis in ribosomes). Substances continuously move across membranes for these processes; we discuss diffusion, osmosis, and active transport."
+    },
+    {
+      "chapter": "4.2",
+      "chapter_root": "4",
+      "type": "content",
+      "text": "Membranes (cell, tonoplast, nuclear, mitochondrial, chloroplast) share a basic structure that regulates material movement. The cell membrane is a lipoprotein trilayer (~7.5 nm) with pores allowing selective passage."
+    },
+    {
+      "chapter": "4.1",
+      "chapter_root": "4",
+      "type": "content",
+      "text": "Properties of the cell membrane: semi-permeability; sensitivity to temperature and pH (proteins denature); electric charges influencing transport and environmental sensing. Study Questions included."
+    },
+    {
+      "chapter": "4.3",
+      "chapter_root": "4",
+      "type": "content",
+      "text": "Introduction to diffusion, osmosis, active transport. Practical Activity: demonstrate diffusion with potassium manganate (VII); definition and roles of diffusion (absorption, gaseous exchange, excretion, translocation). Factors affecting diffusion: gradient, surface area to volume ratio, thickness, molecule size, temperature."
+    },
+    {
+      "chapter": "4.3",
+      "chapter_root": "4",
+      "type": "content",
+      "text": "Osmosis demo with visking tubing: setup, observations, interpretation (semi-permeable membrane allows water, not large solutes)."
+    },
+    {
+      "chapter": "4.6",
+      "chapter_root": "4",
+      "type": "content",
+      "text": "Definition of osmosis; isotonic/hypotonic/hypertonic solutions; osmosis as a special diffusion across semi-permeable membrane. Practical: osmosis in potato tissue; osmotic pressure and potential; water relations in animals (haemolysis, crenation)."
+    },
+    {
+      "chapter": "4.3",
+      "chapter_root": "4",
+      "type": "content",
+      "text": "Water relations in plant cells: turgor and wall pressure; plasmolysis and deplasmolysis; practical with onion epidermis; wilting vs permanent wilting; roles of osmosis (absorption, support, stomatal opening, insectivorous plants, osmoregulation)."
+    },
+    {
+      "chapter": "4.3",
+      "chapter_root": "4",
+      "type": "content",
+      "text": "Active transport moves substances against gradients using energy; carrier-mediated uptake. Roles: kidney reabsorption, mineral uptake by roots, absorption from gut, osmotic balance, excretion. Factors affecting active transport: O2, pH, glucose, inhibitors, temperature."
+    },
+    {
+      "chapter": "4.3",
+      "chapter_root": "4",
+      "type": "revision",
+      "text": [
+        "1. (a) What type of membrane is the visking tubing? (b) How does a visking tubing differ from a cell membrane?",
+        "2. Define: (a) diffusion (b) osmosis (c) active transport (d) plasmolysis.",
+        "3. How would you make a flaccid cell turgid?",
+        "4. Effects on cell membrane properties of: (a) temperature (b) strong acid.",
+        "5. Name the method by which molecules like amino acids and glucose enter a cell.",
+        "6. Differences between: (a) turgor pressure vs wall pressure (b) osmotic pressure vs osmotic potential.",
+        "7. Demonstrate diffusion using a bottle containing perfume.",
+        "8. Name two plant and two animal processes in which diffusion is important.",
+        "9. How is diffusion rate affected by: (a) temperature (b) concentration (c) surface area to volume ratio?",
+        "10. Water relations experiment with visking tubes X and Y in a beaker (Fig. 4.10): (a) Explain what took place in X and Y. (b) Identify which liquid is hypotonic to the beaker and define hypotonic vs hypertonic."
+      ]
+    },  
+    {
+      "chapter": "4.7",
+      "chapter_root": "4",
+      "type": "revision",
+      "text": [
+        "1. (a) What type of membrane is the visking tubing? (b) How does a visking tubing differ from a cell membrane?",
+        "2. Explain the following terms: (a) diffusion (b) osmosis (c) active transport (d) plasmolysis.",
+        "3. How would you make a flaccid cell turgid?",
+        "4. In what ways are the properties of the cell membrane affected by: (a) temperature? (b) strong acid?",
+        "5. Name the method by which molecules like amino acids and glucose enter a cell.",
+        "6. Explain the differences between: (a) turgor pressure and wall pressure (b) osmotic pressure and osmotic potential.",
+        "7. How would you demonstrate the process of diffusion using a bottle containing perfume?",
+        "8. Name two plant and two animal processes in which diffusion plays an important role.",
+        "9. How is the rate of diffusion affected by: (a) temperature? (b) concentration? (c) surface area to volume ratio?",
+        "10. An experiment was set up with visking tubes X and Y in a beaker (Fig. 4.10). After 20 minutes X felt hard and liquid increased, Y was soft and liquid decreased. (a) Explain what took place. (b) Identify which liquid is hypotonic to the beaker liquid. (c) Explain hypotonic vs hypertonic solutions.",
+        "11. Four potato strips A, B, C, D were placed in sugar solutions of 10%, 15%, 25%, 35%. (i) What changes would you expect in strips A and D? (ii) Account for the changes in A and D.",
+        "12. An experiment was set up with visking tubing in distilled water and sodium chloride solution (Fig. 4.11). (i) What will happen to the tubing in M and N after two hours? (ii) Explain the observation in M. (iii) What does visking tubing correspond to in a living organism?",
+        "13. Students set up an experiment with visking tubing containing sugar solution (Fig. 4.12). After some time the level of sugar solution rose. (a) What physiological process was being investigated? (b) Account for the rise in sugar solution. (c) Suggest the results if boiled pawpaw was used."
+      ]
+    },
+    
+    {
+      "chapter": "5.1",
+      "chapter_root": "5",
+      "type": "content",
+      "text": "Nutrition introduction: food is required for energy, growth and repair. Modes include autotrophism (self-manufacture of food e.g. photosynthesis, chemosynthesis) and heterotrophism (consuming complex foods from plants or animals)."
+    },
+    {
+      "chapter": "5.2",
+      "chapter_root": "5",
+      "type": "content",
+      "text": "Photosynthesis: external and internal leaf structure, cuticle, epidermis, guard cells, palisade and spongy mesophyll, veins. Adaptations for photosynthesis (large lamina, thinness, stomata, chloroplasts, vascular bundles, leaf mosaic). Chloroplast structure (double membrane, grana, stroma, chlorophyll). Light and dark stages: photolysis, ATP formation, carbon fixation. Practical activities: starch test in leaves, factors affecting photosynthesis (light, CO₂, temperature, water)."
+    },
+    {
+      "chapter": "5.3",
+      "chapter_root": "5",
+      "type": "content",
+      "text": "Biochemistry of food: carbohydrates (mono-, di-, polysaccharides), tests for starch and sugars; lipids (fats, oils; properties; Sudan test, emulsion test); proteins (amino acids, peptide bonds, denaturation, tests for protein); enzymes (naming, properties, factors affecting activity, inhibitors, co-factors, importance)."
+    },
+    {
+      "chapter": "5.4",
+      "chapter_root": "5",
+      "type": "content",
+      "text": "Heterotrophism: holozoic, saprophytic, parasitic, symbiotic nutrition. Human dentition and types of teeth (incisors, canines, premolars, molars), adaptations in herbivores, carnivores, omnivores. Structure of a tooth. Dental diseases and hygiene. Digestive system structure and functions. Digestive processes in mouth, stomach, duodenum, ileum. Emulsification, enzyme action, absorption in ileum (villi, lacteals), assimilation. Egestion and role of caecum/appendix. Practical activities: emulsification, digestion experiments."
+    },
+    {
+      "chapter": "5.5",
+      "chapter_root": "5",
+      "type": "content",
+      "text": "Detailed digestion processes and assimilation. Summary of enzyme actions in digestion. Conditions when proteins are used as energy source. Practical dissection of mammal digestive system."
+    },
+    {
+      "chapter": "5.6",
+      "chapter_root": "5",
+      "type": "content",
+      "text": "Vitamins and mineral salts: sources, roles, deficiency diseases (e.g., Vitamin C → scurvy, Vitamin D → rickets, Vitamin A → night blindness). Practical activity: test for Vitamin C with DCPIP. Roughage and water roles in digestion."
+    },
+    {
+      "chapter": "5.7",
+      "chapter_root": "5",
+      "type": "content",
+      "text": "Energy values of foods; factors influencing energy requirements (BMR, activity, age, body size, sex). Table 5.4: daily energy use in males vs females."
+    },
+    {
+      "chapter": "5.7",
+      "type": "revision",
+      "text": [
+        "1. Define the term photosynthesis.",
+        "2. State four requirements for photosynthesis and give the source of each.",
+        "3. Discuss the role of each of the following during photosynthesis: (i) xylem vessels (ii) chlorophyll (iii) guard cells.",
+        "4. (a) Draw and label the structure of a chloroplast. (b) State where (i) the light reaction and (ii) the dark reaction occur.",
+        "5. Explain: (a) Why variegated plants accumulate less food than non-variegated plants under similar conditions. (b) Why a leaf cannot be tested for starch by adding iodine solution directly. (c) Why most leaves are thin with broad surfaces. (d) Why plants will not photosynthesise in the dark.",
+        "6. (a) Name the elements that form (i) carbohydrates (ii) proteins. (b) (i) State two properties of polysaccharides. (ii) Give three differences between polysaccharides and monosaccharides. (c) What are the building blocks of proteins?",
+        "7. (a) State two functions of lipids in the human body. (b) Name the chemical used to test for Vitamin C and the expected positive result.",
+        "8. An experiment investigated how enzyme concentration affects reaction rate (graph provided). (a) Explain how enzyme concentration affects the rate. (b) From the graph, what is the rate in test-tube B? (c) At what time interval were readings taken? (d) Why are some points not on a straight line? (e) Why were different amounts of distilled water added to tubes A, B and C?",
+        "9. (a) What is heterotrophism? (b) State four heterotrophic modes of nutrition.",
+        "10. State the factors that determine energy requirements in human beings.",
+        "11. Define the following terms: (i) peristalsis (ii) emulsification (iii) assimilation.",
+        "12. Name two nutrients that do not require digestion before absorption and explain why.",
+        "13. Figure 5.30 shows a portion of the human alimentary canal. (a) (i) Identify the part. (ii) Give one reason for your answer. (b) State two functions of the part. (c) State four adaptations of the part.",
+        "14. Explain why the enzymes trypsin and pepsin are produced as trypsinogen and pepsinogen respectively.",
+        "15. Figure 5.30 represents a longitudinal section of a human tooth. (i) Identify the tooth type and give reasons. (ii) State its functions. (iii) Name the structures labelled P, Q, R and state their functions. (iv) State four ways of keeping teeth healthy.",
+        "16. In which region of the mammalian digestive tract does digestion of fats begin?",
+        "17. List four components of pancreatic juice.",
+        "18. Give a reason why the digestion of starch started in the mouth is not continued in the stomach.",
+        "19. Explain the most likely effect on digestion if the small intestine of a human is surgically reduced.",
+        "20. In an experiment on pepsin action on egg albumen, 5 cm³ albumen was placed in test-tubes Q, R, S, T with different additions (HCl, boiled pepsin, unboiled pepsin) and incubated at 37°C for 8 minutes. (a) Tabulate the expected results. (b) State two conclusions. (c) Why was 37°C used? (d) Where is pepsin produced in the body?"
+      ]
+    }
+  ]
+]

@@ -1,0 +1,63 @@
+# === FRONTEND (Next.js, React) ===
+frontend/node_modules/
+frontend/.next/
+frontend/.env*
+frontend/npm-debug.log
+frontend/.turbo/
+frontend/out/
+
+# === BACKEND (Python, FastAPI) ===
+backend/venv/
+backend/__pycache__/
+backend/*.pyc
+backend/.env
+backend/.DS_Store
+backend/*.sqlite3
+backend/*.log
+backend/*.db
+backend/*.egg-info/
+backend/.mypy_cache/
+backend/.pytest_cache/
+backend/.ruff_cache/
+
+# === GLOBAL / SHARED ===
+*.log
+*.tmp
+*.bak
+*.swp
+.DS_Store
+.env
+.env.local
+.env.*.local
+*.env
+
+# === DATA / TEMP FILES ===
+data/raw/*
+data/cleaned_chunks/*
+!data/cleaned_chunks/bio_form1_structured.json
+
+# === VECTOR STORE (LangChain or local vector db) ===
+vector_db/
+chroma/
+chroma_db/
+index/
+*.pkl
+
+# === PYTHON CACHE ===
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.ipynb_checkpoints
+
+# === VS Code / IDE ===
+.vscode/
+.idea/
+*.code-workspace
+
+# === OS JUNK ===
+Thumbs.db
+ehthumbs.db
+
+# === LEGACY STREAMLIT ===
+.streamlit/

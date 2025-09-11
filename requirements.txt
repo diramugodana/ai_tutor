@@ -1,0 +1,12 @@
+openai
+langchain
+langchain-openai
+langchainhub
+chromadb
+python-dotenv
+tiktoken
+streamlit
+Pillow
+langchain-community
+langchain_chroma
+pinecone
