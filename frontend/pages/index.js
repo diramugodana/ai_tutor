@@ -58,7 +58,7 @@ export default function Home() {
       {/* Overlay UI */}
       <div className="relative z-10 text-center">
         <h1 className="mb-8 text-5xl font-bold tracking-tight">
-          Swahili-English Curriculum Tutor
+          English-Swahili Curriculum Tutor
         </h1>
         <p className="mb-6 text-lg text-gray-300 max-w-xl">
           A bilingual AI-powered study companion for Form 1 students in Kenya
@@ -66,7 +66,8 @@ export default function Home() {
         <div className="mb-8 text-sm text-gray-400">
           <p>Summarize official textbook chapters</p>
           <p>Answer curriculum revision questions</p>
-          <p>Ask questions in English or Kiswahili</p>
+          <p>Utilize three learning modes</p>
+          <p>Get curriculum- aligned answers in both English and Swahili </p>
         </div>
         <button
           onClick={() => router.push("/tutor")}
