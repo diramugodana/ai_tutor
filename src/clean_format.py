@@ -63,7 +63,7 @@ def clean_and_structure_text():
     with open(OUTPUT_JSON_PATH, "w", encoding="utf-8") as f:
         json.dump(structured, f, indent=2, ensure_ascii=False)
 
-    print(f"✅ Structured {len(structured)} content blocks. Saved to: {OUTPUT_JSON_PATH}")
+    print(f"Structured {len(structured)} content blocks. Saved to: {OUTPUT_JSON_PATH}")
 
 if __name__ == "__main__":
     clean_and_structure_text()

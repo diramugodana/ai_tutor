@@ -152,28 +152,41 @@ def _top_content_for_question(question: str, fallback_docs, k: int = 6):
 
 def fetch_revision_candidates(chapter_query: str, k_try: int = 400):
     """
-    Robust revision fetch:
-    1) exact/child chapters by 'chapter'
-    2) chapter_root (major)
-    3) all revisions (last resort)
+    Fetch revision questions by exact chapter match.
+    For chapter "1", look for chapter="1.5" (the pattern is: revision at X.5).
     """
-    # 1) exact & subchapter match
-    exact = fetch_docs_by("revision", chapter_query, k=k_try)
-    if exact:
-        return exact
-
-    # 2) chapter_root
     major = str(chapter_query).split(".", 1)[0]
-    by_root = fetch_docs_by_root("revision", major, k=k_try)
-    if by_root:
-        return by_root
-
-    # 3) last resort
-    return vectorstore.similarity_search(
-        f"revision questions for chapter {chapter_query}",
-        k=k_try,
-        filter={"type": "revision"}
-    )
+    # Revision questions are typically at chapter X.5 (e.g., "1.5", "2.5", "3.7", "4.3", "4.7", "5.7")
+    revision_chapter = f"{major}.5"
+    
+    try:
+        # Try exact chapter match first (e.g., "1.5" for chapter 1)
+        revisions = vectorstore.similarity_search(
+            f"revision questions",
+            k=k_try,
+            filter={"type": "revision", "chapter": revision_chapter}
+        )
+        
+        if revisions:
+            return revisions
+        
+        # Fallback: get all revisions and filter manually by chapter starting with major
+        all_revisions = vectorstore.similarity_search(
+            f"chapter {major} questions",
+            k=k_try,
+            filter={"type": "revision"}
+        )
+        
+        # Filter to chapters that start with the major number followed by a dot
+        matching = [
+            doc for doc in all_revisions 
+            if doc.metadata.get("chapter", "").startswith(f"{major}.")
+        ]
+        
+        return matching if matching else []
+        
+    except Exception:
+        return []
 
 def _clean_question_text(text: str) -> str:
     """
@@ -225,18 +238,22 @@ def summarize_chapter(chapter_query: str):
 
 # ----------------- 2) Answer Revision Questions (FIXED) -----------------
 def answer_revision_questions(chapter_query: str):
+    print(f"\n[ENGINE] Starting answer_revision_questions for chapter {chapter_query}")
     # Fetch revision docs (with root fallback), and content from the entire chapter_root
     major = str(chapter_query).split(".", 1)[0]
     revision_docs = fetch_revision_candidates(chapter_query, k_try=600)
+    print(f"[ENGINE] Fetched {len(revision_docs)} revision docs")
 
-    # Content: prefer chapter_root scope so we have all subchapters’ material
+    # Content: prefer chapter_root scope so we have all subchapters' material
     content_docs = fetch_docs_by_root("content", major, k=600)
     if not content_docs:
         # fallback to exact/variant
         content_docs = fetch_docs_by("content", chapter_query, k=400)
+    print(f"[ENGINE] Fetched {len(content_docs)} content docs")
 
     # Extract and clean questions
     raw_questions = extract_revision_questions(revision_docs)
+    print(f"[ENGINE] Extracted {len(raw_questions)} raw questions")
     seen = set()
     questions = []
     for q in raw_questions:
@@ -258,7 +275,9 @@ def answer_revision_questions(chapter_query: str):
             continue
         filtered.append(q)
 
+    print(f"[ENGINE] After filtering: {len(filtered)} questions")
     if not filtered:
+        print(f"[ENGINE] No questions found - returning empty list")
         return []
 
     prompt = build_prompt_template(chapter_query)
@@ -272,12 +291,35 @@ def answer_revision_questions(chapter_query: str):
 
         out = chain.invoke({"context": relevant, "input": q})
         english, swahili = parse_bilingual(out)
+        
+        # Translate question to Swahili
+        swahili_question = _translate_question_to_swahili(q)
+        
         results.append({
             "question_text": q,
+            "swahili_question": swahili_question,
             "answer": {"english": english, "swahili": swahili}
         })
 
     return results
+
+def _translate_question_to_swahili(question: str) -> str:
+    """Translate a single question to Swahili using GPT."""
+    try:
+        from langchain.prompts import ChatPromptTemplate
+        translation_prompt = ChatPromptTemplate.from_messages([
+            ("system", "You are a translator. Translate the following English question to Swahili. Return ONLY the Swahili translation, nothing else."),
+            ("human", "{question}")
+        ])
+        chain = translation_prompt | llm
+        result = chain.invoke({"question": question})
+        # Extract content from AIMessage
+        if hasattr(result, 'content'):
+            return result.content.strip()
+        return str(result).strip()
+    except Exception as e:
+        print(f"[ENGINE] Translation error: {e}")
+        return question  # Fallback to English if translation fails
 
 # ----------------- 3) General Q&A (UPDATED) -----------------
 def answer_general_question(user_question: str):
@@ -293,4 +335,4 @@ def answer_general_question(user_question: str):
 
 if __name__ == "__main__":
     docs = fetch_docs_by("content", "1", 20) + fetch_docs_by("revision", "1", 20)
-    print(f"✅ Sample docs: {len(docs)}")
+    print(f"Sample docs: {len(docs)}")

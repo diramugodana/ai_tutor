@@ -1,81 +1,135 @@
-Swahili-English AI Curriculum Tutor
-This project is a bilingual AI-powered educational assistant designed to support Form 1 students in Kenya with their Biology and Geography curriculum. The tool enables students to summarize textbook chapters, answer official revision questions, and ask custom questions in either English or Swahili. The application integrates a modern frontend interface with a retrieval-augmented generation (RAG) backend that leverages semantic search and large language models.
+## Swahili–English AI Curriculum Tutor
 
-Features
-Chapter summarization from official textbooks
-National revision question answering
-Bilingual support: English and Swahili
-General question answering with semantic search
-Context-aware LLM responses
-Light and dark mode UI with animated particle background
-Vector-based retrieval using Pinecone
-Structured, chunked ingestion of textbook data
-Tech Stack
-Languages
-Python, JavaScript
+A bilingual AI-powered tutor for Form 1 students in Kenya (Biology and Geography). It summarizes chapters, answers official revision questions, and handles free-form questions—returning English and Swahili side-by-side using a RAG pipeline (Pinecone + OpenAI + LangChain).
 
-Frameworks and Libraries
-Frontend: Next.js, React, Tailwind CSS, next-themes
-Backend: FastAPI, Uvicorn
-AI and Embeddings: OpenAI GPT-4 Turbo, OpenAI Embeddings, LangChain
-Vector Store: Pinecone
-Supporting Tools
-dotenv
-uuid
-pydantic
-Project Structure
+## What’s new (Nov 2025)
+- Faster, smoother answers by switching default model to GPT‑4o‑mini (keeps quality with noticeably lower latency)
+- Snappier UX: optimized rendering, loading states, and input handling (no more UI loops; fluid transitions)
+- Cleaner, more formal interface (emoji-free), with consistent dark‑mode on both panels and a unified black gradient
+- Revision flow upgraded: all chapter questions grouped in one place with clear numbering and bilingual answers
+- Precision retrieval: better chapter filtering and noise suppression (header/boilerplate filtering, deduplication)
+- Backend translates questions to Swahili for the Swahili panel while preserving the original English on the left
+- Safer Pinecone usage: namespace safeguards and re‑index stability improvements for consistent results
+- One‑click history clear, improved empty states, and a modernized Tutor page aligned with the landing page
+
+## Tech stack
+- Frontend: Next.js, React, Tailwind CSS, next-themes
+- Backend: FastAPI (Uvicorn)
+- AI: OpenAI (GPT-4o-mini by default) via LangChain
+- Vector DB: Pinecone
+
+## Project structure (high level)
+```
 ai_tutor/
-├── backend/              # FastAPI backend
-│   ├── main.py           # FastAPI application setup
-│   └── app/routes.py     # API route definitions
-├── frontend/             # Next.js frontend
-│   ├── pages/tutor.js    # Main interface for tutoring
-│   ├── components/       # Shared React components
-│   └── styles/           # Global styles (Tailwind)
-├── src/                  # Core AI engine and logic
-│   ├── ai_engine.py      # Handles summarization, Q&A logic
-│   ├── chunk_and_embed.py# Data ingestion and embedding script
-│   └── utils/            # Utility functions (chapter matcher, prompts, etc.)
-├── data/                 # Cleaned and structured textbook JSON data
-└── vector_db/            # Local vector DB (optional if not using Pinecone)
-Installation and Setup
-1. Clone the repository
-git clone https://github.com/your-username/ai_tutor.git
-cd ai_tutor
-2. Backend (FastAPI + Python)
-cd backend
+├─ backend/
+│  ├─ main.py            # FastAPI app entry
+│  └─ app/
+│     ├─ routes.py       # REST endpoints
+│     └─ schemas.py      # Pydantic models
+├─ frontend/
+│  ├─ pages/
+│  │  ├─ index.js        # Landing page (matrix effect)
+│  │  └─ tutor.js        # Tutor UI (modes: summarize, revision, ask)
+│  └─ styles/globals.css # Tailwind + animations
+├─ src/
+│  ├─ ai_engine.py       # Core RAG + bilingual output
+│  ├─ chunk_and_embed.py # Ingestion + embedding to Pinecone
+│  └─ utils/             # prompts, token utils, filtering
+├─ data/                 # Processed textbook JSON
+└─ requirements.txt
+```
+
+## Using the tutor (for learners)
+1) Choose your Subject (Form 1 Biology or Geography)
+2) Pick a Mode:
+	- Summarize Chapter: Get an English + Swahili summary of a chapter
+	- Answer Revision Questions: See all official revision questions for the chapter with bilingual answers grouped neatly
+	- Ask a General Question: Type anything related to the syllabus and get a bilingual answer
+3) Select the Chapter (for summarize/revision) or enter your question (for ask)
+4) Submit and read both English and Swahili side‑by‑side
+
+Notes
+- Questions on the Swahili side are auto‑translated; answers are generated bilingually.
+- Dark mode offers a consistent, readable look with a unified black gradient.
+
+## Environment configuration
+Create a `.env` file in the repo root with at least:
+
+```
+OPENAI_API_KEY=sk-...
+PINECONE_API_KEY=...
+PINECONE_INDEX_NAME=bio-form1
+# One of these is required by some clients
+PINECONE_ENVIRONMENT=...
+# or
+PINECONE_ENV=...
+
+# Optional/testing
+PINECONE_NAMESPACE=dev_test   # leave unset for the default namespace
+```
+
+Frontend can point to a custom backend URL using:
+
+```
+NEXT_PUBLIC_API_BASE=http://localhost:8000
+```
+
+## How to run (local)
+1) Python env and backend
+```
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
-uvicorn backend.main:app --reload
-3. Environment Configuration
-Create a .env file in the root directory:
+uvicorn backend.main:app --reload --port 8000
+```
 
-OPENAI_API_KEY=your_openai_key
-PINECONE_API_KEY=your_pinecone_key
-PINECONE_INDEX_NAME=ai-tutor-index
-4. Frontend (Next.js)
+2) Frontend
+```
 cd frontend
 npm install
 npm run dev
-Application runs at http://localhost:3000
+```
+Visit http://localhost:3000
 
-Usage
-Select subject and interaction mode (summarize, revision questions, or custom query)
-If applicable, choose a chapter or enter a question
-Submit to receive bilingual responses side by side
-Chunking and Retrieval Strategy
-Documents are split using LangChain's RecursiveCharacterTextSplitter
-Each chunk is embedded using OpenAI's text-embedding-ada-002 model
-Stored in Pinecone with structured metadata (chapter, type)
-Retrieval filters include exact chapter match and content type (e.g., "revision")
-Custom prompts ensure consistent bilingual output with fallback formatting
-API Endpoints
-POST /summarize – summarize a specific chapter
-POST /revision – answer all revision questions for a chapter
-POST /ask – answer a freeform general question
-License
-This project is licensed under the MIT License.
+## Data ingestion (Pinecone)
+To (re)build the vector index from `data/cleaned_chunks/bio_form1_structured.json`:
+```
+source venv/bin/activate
+python src/chunk_and_embed.py
+```
 
-Author
+Notes:
+- The script splits structured content and upserts with rich metadata (type, chapter)
+- Use the default namespace (recommended) unless testing; if testing, export `PINECONE_NAMESPACE`
+
+## API endpoints
+- POST `/summarize` → `{ chapter }` → `{ response: { english, swahili } }`
+- POST `/revision` → `{ chapter }` → `{ questions: [{ question_text, swahili_question, answer: { english, swahili } }] }`
+- POST `/ask` → `{ question }` → `{ response: { english, swahili } }`
+
+See `API_RESPONSE_REFERENCE.md` for fuller examples and fields.
+
+## Troubleshooting
+- Port 8000 already in use
+	- Kill and restart: `lsof -ti:8000 | xargs kill -9`
+- Pinecone errors on startup
+	- Ensure `PINECONE_API_KEY`, `PINECONE_INDEX_NAME`, and either `PINECONE_ENVIRONMENT` or `PINECONE_ENV` are set
+- Frontend can’t reach backend
+	- Set `NEXT_PUBLIC_API_BASE=http://localhost:8000`, restart `npm run dev`
+- Inconsistent/chapter-mismatched results
+	- Verify the namespace; unset `PINECONE_NAMESPACE` for default unless you explicitly need a test namespace
+
+## Purpose of the additional .md files
+- `QUICK_START_OPTIMIZED.md` – Fast path to spin up with recommended settings and shortcuts
+- `PERFORMANCE_OPTIMIZATION.md` – Caching, async patterns, env tips, and production tuning notes
+- `API_RESPONSE_REFERENCE.md` – Practical examples of backend responses and field shapes for each endpoint
+- `FORMATTING_CHANGES.md` – UI/UX change log to track visual and layout decisions over time
+- `IMPLEMENTATION_SUMMARY.md` – High-level summary of the recent implementation work and rationale
+
+These keep the main README focused and concise while providing deeper operational and developer docs when needed.
+
+## License
+MIT License
+
+## Author
 Developed by Diramu Kana Godana for academic and educational research purposes.

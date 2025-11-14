@@ -17,6 +17,7 @@ tiktoken==0.8.0
 Pillow==10.4.0
 fastapi==0.115.0
 uvicorn==0.38.0
+redis>=4.6.0
 
 # --- Compatibility pins for Py3.12 (all binary wheels exist) ---
 aiohttp==3.13.2

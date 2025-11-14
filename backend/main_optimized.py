@@ -7,7 +7,7 @@ import sys
 import time
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.middleware.gzip import GZIPMiddleware
+from starlette.middleware.gzip import GZipMiddleware
 
 # Ensure project root on path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
@@ -33,8 +33,8 @@ app = FastAPI(
     description="AI Tutor with caching, parallel processing, and performance optimizations",
 )
 
-# Add GZIP compression middleware for faster responses
-app.add_middleware(GZIPMiddleware, minimum_size=1000)
+# Add GZip compression middleware for faster responses
+app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 # CORS middleware
 app.add_middleware(
@@ -57,6 +57,15 @@ async def add_timing_header(request, call_next):
 
 # Include routes
 app.include_router(router)
+
+
+@app.on_event("startup")
+def startup_info():
+    redis_url = os.getenv("REDIS_URL") or os.getenv("REDIS_SERVER")
+    if redis_url:
+        print(f"Using Redis cache at: {redis_url}")
+    else:
+        print("Running without Redis; using in-memory cache (not shared across processes)")
 
 # -------- Health & Status Endpoints --------
 @app.get("/health", tags=["status"])

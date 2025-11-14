@@ -18,6 +18,52 @@ _SPLIT_RE = re.compile(
 
 NOISE_PREFIXES = ("index", "--- page", "chapter", "fig.", "plate")
 
+# Section headers that are NOT questions
+HEADER_KEYWORDS = (
+    "introduction", "the cell", "the light microscope", "the electron microscope",
+    "classification", "preparation of", "estimation of", "external features",
+    "magnification", "handling and care"
+)
+
+def _is_likely_question(text: str) -> bool:
+    """
+    Filter to identify actual questions vs section headers.
+    Returns True if text looks like a real question.
+    """
+    text = text.strip()
+    if not text or len(text) < 15:  # Too short to be a real question
+        return False
+    
+    text_lower = text.lower()
+    
+    # Reject section headers (typically short titles without question marks)
+    if any(text_lower == keyword or text_lower.startswith(keyword + " ") 
+           for keyword in HEADER_KEYWORDS):
+        return False
+    
+    # Accept if it has question markers
+    if "?" in text:
+        return True
+    
+    # Accept if it starts with a number (e.g., "1.", "2.")
+    if re.match(r'^\d+[\.\)]\s*\(?\w?\)?', text):
+        return True
+    
+    # Accept if it contains question words or instruction verbs
+    question_indicators = (
+        "what", "why", "how", "when", "where", "which", "who",
+        "explain", "define", "describe", "list", "state", "name",
+        "give", "distinguish", "compare", "calculate", "discuss"
+    )
+    if any(word in text_lower for word in question_indicators):
+        return True
+    
+    # Reject if it's just a title (short and no question characteristics)
+    if len(text) < 50 and not any(word in text_lower for word in question_indicators):
+        return False
+    
+    return True
+
 def _clean_line(s: str) -> str:
     s = (s or "").strip()
     if not s:
@@ -53,23 +99,22 @@ def _split_questions_from_text(block: str) -> List[str]:
 
 def extract_revision_questions(revision_docs) -> List[str]:
     """
-    Supports:
-      - JSON list: {"type":"revision", "text":[ "...", "...", ... ]}
-      - Single string block: {"type":"revision", "text":"1. ... 2. ..."}
+    Extract revision questions from documents.
+    Each doc.page_content is a single question string (already split when uploaded to Pinecone).
+    Filters out section headers and only returns actual questions.
     """
     questions: List[str] = []
     for d in (revision_docs or []):
-        text: Union[str, List[str]] = getattr(d, "page_content", "") or ""
-        if isinstance(text, list):
-            # Your canonical format: list of full questions
-            for item in text:
-                item = _clean_line(str(item))
-                if item:
-                    questions.append(item)
-        else:
-            # Big textual blob: split
-            qs = _split_questions_from_text(str(text))
-            questions.extend(qs)
+        text = getattr(d, "page_content", "") or ""
+        text = str(text).strip()
+        
+        if not text:
+            continue
+            
+        # Clean and check if it's a valid question
+        cleaned = _clean_line(text)
+        if cleaned and _is_likely_question(cleaned):
+            questions.append(cleaned)
 
     # Deduplicate, keep order
     seen = set()

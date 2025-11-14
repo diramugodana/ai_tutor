@@ -1,4 +1,4 @@
-# 📁 ai_tutor/src/retrieve_answer.py
+# ai_tutor/src/retrieve_answer.py
 
 import os
 import re
@@ -35,12 +35,12 @@ llm = ChatOpenAI(model="gpt-4-turbo", temperature=0.3)
 # --- MAIN ---
 if __name__ == "__main__":
     user_question = input("Ask a Biology question: ").strip()
-    print(f"🔍 Received input: {user_question}")
+    print(f"Received input: {user_question}")
 
     # 🧠 1. Chapter Summary
     summary_match = re.search(r"summarize\s+(?:chapter|chap)?\s*(\d+(\.\d+)*)", user_question.lower())
     if summary_match:
-        print("➡️ Summary mode triggered")
+        print("Summary mode triggered")
         chapter_query = summary_match.group(1)
 
         all_docs = vectorstore.similarity_search("", k=9999)
@@ -63,16 +63,16 @@ if __name__ == "__main__":
             selected_docs.append(doc)
             token_total += tokens
 
-        print(f"🧠 Using {len(selected_docs)} chunks ({token_total} tokens) for summarization.")
+        print(f"Using {len(selected_docs)} chunks ({token_total} tokens) for summarization.")
 
         if selected_docs:
             summary_prompt = build_summary_prompt(chapter_query)
             summary_chain = create_stuff_documents_chain(llm=llm, prompt=summary_prompt)
             result = summary_chain.invoke({"context": selected_docs})
-            print("✅ Chapter Summary:\n")
+            print("Chapter Summary:\n")
             print(result)
         else:
-            print("⚠️ No content chunks found for Chapter", chapter_query)
+            print("No content chunks found for Chapter", chapter_query)
         exit()
 
     # 📘 2. Revision Question Answering
@@ -82,7 +82,7 @@ if __name__ == "__main__":
     )
 
     if "revision" in user_question.lower() and revision_match:
-        print("➡️ Revision mode triggered")
+        print("Revision mode triggered")
         chapter_query = revision_match.group(1)
 
         all_docs = vectorstore.similarity_search("", k=9999)
@@ -100,7 +100,7 @@ if __name__ == "__main__":
         ]
 
         for doc in revision_docs:
-            print(f"🔍 Found revision chunk: Chapter {doc.metadata.get('chapter')} | {doc.page_content[:60]}...")
+            print(f"Found revision chunk: Chapter {doc.metadata.get('chapter')} | {doc.page_content[:60]}...")
 
         questions = extract_revision_questions(revision_docs)
         questions = list(dict.fromkeys(questions))  # Deduplicate
@@ -120,18 +120,18 @@ if __name__ == "__main__":
                 if not relevant_docs:
                     relevant_docs = content_docs[:3]
 
-                print(f"\n❓ Revision Question {idx+1}: {q}")
+                print(f"\nRevision Question {idx+1}: {q}")
                 result = chain.invoke({
                     "context": relevant_docs,
                     "input": q
                 })
-                print("✅ Answer:\n", result)
+                print("Answer:\n", result)
         else:
-            print("⚠️ No revision questions found for Chapter", chapter_query)
+            print("No revision questions found for Chapter", chapter_query)
         exit()
 
     # 💬 3. General Question Answering
-    print("➡️ General question mode triggered")
+    print("General question mode triggered")
     prompt = build_prompt_template("unknown")
     qa_chain: Runnable = create_retrieval_chain(
         retriever=retriever,
@@ -139,9 +139,9 @@ if __name__ == "__main__":
     )
 
     result = qa_chain.invoke({"input": user_question})
-    print("\n✅ Answer:\n")
+    print("\nAnswer:\n")
     print(result["answer"])
 
-    print("\n🔍 Retrieved Chunks:\n")
+    print("\nRetrieved Chunks:\n")
     for doc in result.get("context", []):
         print(f"• Chapter: {doc.metadata.get('chapter')} | Type: {doc.metadata.get('type')}")

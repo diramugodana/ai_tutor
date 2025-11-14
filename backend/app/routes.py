@@ -17,6 +17,10 @@ def summarize(data: ChapterInput):
 @router.post("/revision", response_model=RevisionResponse)
 def revision(data: ChapterInput):
     results = answer_revision_questions(data.chapter)
+    print(f"\n[ROUTE DEBUG] answer_revision_questions returned {len(results)} results for chapter {data.chapter}")
+    if results:
+        print(f"[ROUTE DEBUG] First result: {results[0]}")
+    
     questions = [
         RevisionQuestionResponse(
             question_text=q["question_text"],

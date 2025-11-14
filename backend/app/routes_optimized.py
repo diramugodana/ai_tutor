@@ -64,9 +64,13 @@ def clear_cache():
 @router.get("/cache/stats", tags=["admin"])
 def cache_stats():
     """Get cache statistics."""
+    # query_cache may be Redis-backed (no direct mapping to a dict). Use
+    # the cache-count helper which is best-effort.
+    count = getattr(query_cache, "get_cache_count", None)
+    cached = count() if callable(count) else len(getattr(query_cache, "cache", {}))
     return {
-        "cached_queries": len(query_cache.cache),
-        "ttl_seconds": query_cache.ttl_seconds,
+        "cached_queries": cached,
+        "ttl_seconds": getattr(query_cache, "ttl_seconds", 600),
     }
 
 # -------- Performance Monitoring --------

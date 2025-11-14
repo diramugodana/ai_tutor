@@ -28,7 +28,7 @@ PINECONE_INDEX_NAME = os.getenv("PINECONE_INDEX_NAME")
 TEST_NAMESPACE = "dev_test"  # Safe, non-destructive namespace
 MAX_ITEMS = 20  # Small sample for testing
 
-print(f"📄 Test ingest script")
+print("Test ingest script")
 print(f"   Index: {PINECONE_INDEX_NAME}")
 print(f"   Namespace: {TEST_NAMESPACE}")
 print(f"   Max items: {MAX_ITEMS}")
@@ -36,12 +36,12 @@ print()
 
 # Load data
 if not os.path.exists(INPUT_PATH):
-    print(f"❌ Data file not found: {INPUT_PATH}")
+    print(f"Data file not found: {INPUT_PATH}")
     sys.exit(1)
 
 with open(INPUT_PATH, "r", encoding="utf-8") as f:
     all_items = json.load(f)
-print(f"✅ Loaded {len(all_items)} total items from {INPUT_PATH}")
+print(f"Loaded {len(all_items)} total items from {INPUT_PATH}")
 
 # Filter valid items and take first MAX_ITEMS
 valid_items = []
@@ -61,7 +61,7 @@ for item in all_items:
     if len(valid_items) >= MAX_ITEMS:
         break
 
-print(f"✅ Selected {len(valid_items)} valid items for test ingest")
+print(f"Selected {len(valid_items)} valid items for test ingest")
 print()
 
 # Prepare texts and metadata
@@ -86,21 +86,21 @@ for idx, item in enumerate(valid_items):
         metadatas.append(meta)
         ids.append(f"test_item_{idx}")
 
-print(f"🚀 Prepared {len(texts)} vectors for embedding and upload")
+print(f"Prepared {len(texts)} vectors for embedding and upload")
 print(f"   Sample metadata: {metadatas[0] if metadatas else 'none'}")
 print()
 
 # Initialize Pinecone and embed
-print(f"🔌 Connecting to Pinecone...")
+print("Connecting to Pinecone...")
 try:
     pc = PineconeClient(api_key=PINECONE_API_KEY)
     pinecone_index = pc.Index(PINECONE_INDEX_NAME)
-    print(f"✅ Connected to index '{PINECONE_INDEX_NAME}'")
+    print(f"Connected to index '{PINECONE_INDEX_NAME}'")
 except Exception as e:
-    print(f"❌ Failed to connect to Pinecone: {e}")
+    print(f"Failed to connect to Pinecone: {e}")
     sys.exit(1)
 
-print(f"📊 Embedding {len(texts)} texts...")
+    print(f"Embedding {len(texts)} texts...")
 embeddings = OpenAIEmbeddings()
 
 try:
@@ -110,23 +110,23 @@ try:
         text_key="page_content",
         namespace=TEST_NAMESPACE,
     )
-    print(f"✅ Vectorstore initialized for namespace '{TEST_NAMESPACE}'")
+    print(f"Vectorstore initialized for namespace '{TEST_NAMESPACE}'")
 except Exception as e:
     print(f"❌ Failed to initialize vectorstore: {e}")
     sys.exit(1)
 
 # Upsert
-print(f"⬆️  Upserting vectors...")
+print("Upserting vectors...")
 try:
     vectorstore.add_texts(texts=texts, metadatas=metadatas, ids=ids)
-    print(f"✅ Upserted {len(texts)} vectors to namespace '{TEST_NAMESPACE}'")
+    print(f"Upserted {len(texts)} vectors to namespace '{TEST_NAMESPACE}'")
 except Exception as e:
     print(f"❌ Upsert failed: {e}")
     sys.exit(1)
 
 print()
 print("=" * 60)
-print("✅ TEST INGEST COMPLETE")
+print("TEST INGEST COMPLETE")
 print("=" * 60)
 print()
 print(f"Next steps:")

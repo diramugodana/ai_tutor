@@ -17,7 +17,7 @@ def test_summarize_response():
         swahili="Sura ya 1 inafunika misingi ya biolojia."
     )
     summary = SummarizeResponse(chapter="1", response=response)
-    print("✅ /summarize response format:")
+    print("/summarize response format:")
     print(summary.model_dump_json(indent=2))
     print()
 
@@ -40,7 +40,7 @@ def test_revision_response():
         )
     ]
     revision = RevisionResponse(chapter="1", questions=questions)
-    print("✅ /revision response format:")
+    print("/revision response format:")
     print(revision.model_dump_json(indent=2))
     print()
 
@@ -54,7 +54,7 @@ def test_ask_response():
         question_text="What is photosynthesis?",
         response=response
     )
-    print("✅ /ask response format:")
+    print("/ask response format:")
     print(ask.model_dump_json(indent=2))
     print()
 
@@ -69,5 +69,5 @@ if __name__ == "__main__":
     test_ask_response()
     
     print("=" * 60)
-    print("✅ All response formats validated successfully!")
+    print("All response formats validated successfully!")
     print("=" * 60)

@@ -65,39 +65,167 @@ vectorstore = LangchainPinecone(
 # Use faster model with lower latency
 llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.3, max_tokens=2000)
 
-# -------- Query Cache --------
+# -------- Query Cache (Redis-backed with in-memory fallback) --------
+try:
+    import redis
+    _REDIS_AVAILABLE = True
+except Exception:
+    redis = None
+    _REDIS_AVAILABLE = False
+
+
 class QueryCache:
-    """Simple in-memory cache with TTL for query results."""
-    def __init__(self, ttl_seconds: int = 600):
-        self.cache: Dict[str, Tuple[dict, float]] = {}
-        self.ttl_seconds = ttl_seconds
-    
+    """Cache abstraction that prefers Redis (persistent across processes) and
+    falls back to a local in-memory cache when Redis is not configured or
+    unavailable. Implements simple request coalescing using a lock key so
+    concurrent identical requests don't trigger duplicate LLM calls.
+    """
+    def __init__(self, ttl_seconds: int = 600, redis_url: Optional[str] = None):
+        self.ttl_seconds = int(ttl_seconds)
+        self._mem_cache: Dict[str, Tuple[dict, float]] = {}
+        self._use_redis = False
+        self._redis = None
+
+        if _REDIS_AVAILABLE and redis_url:
+            try:
+                self._redis = redis.from_url(redis_url, decode_responses=True)
+                # quick ping to validate connection
+                self._redis.ping()
+                self._use_redis = True
+            except Exception:
+                # If Redis is misconfigured/unreachable, fall back to memory cache
+                self._use_redis = False
+
     def _hash_key(self, *args) -> str:
-        """Generate cache key from arguments."""
         key_str = "|".join(str(arg) for arg in args)
         return hashlib.md5(key_str.encode()).hexdigest()
-    
-    def get(self, *args) -> Optional[dict]:
-        """Get cached result if not expired."""
+
+    def _redis_key(self, key: str) -> str:
+        return f"ai_cache:{key}"
+
+    def get(self, *args, wait_for_result: bool = True, lock_timeout: int = 30) -> Optional[dict]:
+        """Get cached result. If Redis is used and a lock is present (another
+        worker is generating the result), this will wait (poll) until the
+        result becomes available or until lock_timeout seconds elapse.
+        """
         key = self._hash_key(*args)
-        if key in self.cache:
-            result, timestamp = self.cache[key]
+
+        if self._use_redis:
+            rk = self._redis_key(key)
+            val = self._redis.get(rk)
+            if val:
+                try:
+                    return json.loads(val)
+                except Exception:
+                    return None
+
+            # If waiting is allowed, poll until result appears or timeout
+            if wait_for_result:
+                lock_key = rk + ":lock"
+                waited = 0.0
+                poll_interval = 0.5
+                while waited < lock_timeout:
+                    val = self._redis.get(rk)
+                    if val:
+                        try:
+                            return json.loads(val)
+                        except Exception:
+                            return None
+                    # if lock no longer exists, break and let caller compute
+                    if not self._redis.exists(lock_key):
+                        break
+                    time.sleep(poll_interval)
+                    waited += poll_interval
+            return None
+
+        # Fallback: in-memory
+        if key in self._mem_cache:
+            result, timestamp = self._mem_cache[key]
             if time.time() - timestamp < self.ttl_seconds:
                 return result
             else:
-                del self.cache[key]
+                del self._mem_cache[key]
         return None
-    
-    def set(self, result: dict, *args) -> None:
-        """Cache result with timestamp."""
-        key = self._hash_key(*args)
-        self.cache[key] = (result, time.time())
-    
-    def clear(self) -> None:
-        """Clear all cached entries."""
-        self.cache.clear()
 
-query_cache = QueryCache(ttl_seconds=600)  # 10 min TTL
+    def set(self, result: dict, *args) -> None:
+        """Set cache value. Also removes coalesce lock if present."""
+        key = self._hash_key(*args)
+        if self._use_redis and self._redis:
+            rk = self._redis_key(key)
+            try:
+                self._redis.set(rk, json.dumps(result), ex=self.ttl_seconds)
+                # remove lock to signal waiters
+                self._redis.delete(rk + ":lock")
+            except Exception:
+                # fall back to in-memory set
+                self._mem_cache[key] = (result, time.time())
+        else:
+            self._mem_cache[key] = (result, time.time())
+
+    def acquire_lock(self, *args, lock_ttl: int = 30) -> bool:
+        """Try to acquire a short-lived lock for the given key. Returns True
+        if caller is responsible for computing the result, False otherwise.
+        """
+        key = self._hash_key(*args)
+        if self._use_redis and self._redis:
+            lock_key = self._redis_key(key) + ":lock"
+            # SETNX with expiry: redis-py provides set(..., nx=True, ex=...)
+            try:
+                return self._redis.set(lock_key, "1", nx=True, ex=lock_ttl)
+            except Exception:
+                return False
+        else:
+            # naive in-memory lock (not safe across processes) — use timestamp
+            mem_lock_key = f"lock:{key}"
+            if mem_lock_key in self._mem_cache:
+                return False
+            self._mem_cache[mem_lock_key] = ({}, time.time())
+            return True
+
+    def release_lock(self, *args) -> None:
+        key = self._hash_key(*args)
+        if self._use_redis and self._redis:
+            lock_key = self._redis_key(key) + ":lock"
+            try:
+                self._redis.delete(lock_key)
+            except Exception:
+                pass
+        else:
+            mem_lock_key = f"lock:{key}"
+            if mem_lock_key in self._mem_cache:
+                del self._mem_cache[mem_lock_key]
+
+    def clear(self) -> None:
+        if self._use_redis and self._redis:
+            # careful: only delete keys with our prefix
+            try:
+                keys = self._redis.keys("ai_cache:*")
+                if keys:
+                    self._redis.delete(*keys)
+            except Exception:
+                pass
+        self._mem_cache.clear()
+
+    def get_cache_count(self) -> int:
+        """Return number of cached entries. For Redis this queries keys with our prefix.
+        This is best-effort and used for admin endpoints.
+        """
+        if self._use_redis and self._redis:
+            try:
+                return len(self._redis.keys("ai_cache:*"))
+            except Exception:
+                return len(self._mem_cache)
+        return len(self._mem_cache)
+
+    # Backwards-compatibility: expose a `cache` attribute used by some admin code.
+    @property
+    def cache(self):
+        return self._mem_cache
+
+
+# Instantiate cache: prefer REDIS_URL env var, otherwise memory-only
+_redis_url = os.getenv("REDIS_URL") or os.getenv("REDIS_SERVER")
+query_cache = QueryCache(ttl_seconds=600, redis_url=_redis_url)
 
 # -------- Helpers --------
 def parse_bilingual(output_text: str) -> Tuple[str, str]:
@@ -185,11 +313,22 @@ def _top_content_for_question(question: str, fallback_docs, k: int = 4) -> List:
 # -------- Main Functions (Synchronous + Async) --------
 
 def summarize_chapter(chapter_query: str) -> dict:
-    """Summarize a chapter (cached)."""
+    """Summarize a chapter (cached). Uses cache + simple request coalescing.
+    If Redis is configured, simultaneous identical requests will wait for the
+    first worker to finish rather than triggering duplicate LLM calls.
+    """
     # Check cache
     cached = query_cache.get("summarize", chapter_query)
     if cached:
         return cached
+
+    # Try to acquire coalesce lock; if not acquired, wait for the result
+    got_lock = query_cache.acquire_lock("summarize", chapter_query, lock_ttl=30)
+    if not got_lock:
+        # Wait for the other worker to populate the cache (short poll)
+        cached2 = query_cache.get("summarize", chapter_query)
+        if cached2:
+            return cached2
 
     # Fetch docs (reduced k from 400 to 200 for speed)
     chapter_docs = _fetch_docs_by("content", chapter_query, k=200)
@@ -210,17 +349,22 @@ def summarize_chapter(chapter_query: str) -> dict:
         query_cache.set(result, "summarize", chapter_query)
         return result
 
-    # Generate summary
-    prompt = build_summary_prompt(chapter_query)
-    chain = create_stuff_documents_chain(llm=llm, prompt=prompt)
-    result = chain.invoke({"context": selected})
+    try:
+        # Generate summary
+        prompt = build_summary_prompt(chapter_query)
+        chain = create_stuff_documents_chain(llm=llm, prompt=prompt)
+        result = chain.invoke({"context": selected})
 
-    english, swahili = parse_bilingual(result)
-    response = {"english": english, "swahili": swahili}
-    
-    # Cache result
-    query_cache.set(response, "summarize", chapter_query)
-    return response
+        english, swahili = parse_bilingual(result)
+        response = {"english": english, "swahili": swahili}
+
+        # Cache result
+        query_cache.set(response, "summarize", chapter_query)
+        return response
+    finally:
+        # Release the coalesce lock if we hold it
+        if got_lock:
+            query_cache.release_lock("summarize", chapter_query)
 
 async def answer_revision_questions_async(chapter_query: str) -> List[dict]:
     """
@@ -232,10 +376,41 @@ async def answer_revision_questions_async(chapter_query: str) -> List[dict]:
     if cached:
         return cached
 
+    # Coalesce concurrent identical revision requests
+    got_lock = query_cache.acquire_lock("revision", chapter_query, lock_ttl=60)
+    if not got_lock:
+        cached2 = query_cache.get("revision", chapter_query)
+        if cached2:
+            return cached2
+
     major = str(chapter_query).split(".", 1)[0]
     
     # Fetch docs (reduced k from 600 to 300)
-    revision_docs = _fetch_docs_by_root("revision", major, k=300)
+    # Revision questions are typically at chapter X.5
+    revision_chapter = f"{major}.5"
+    
+    try:
+        # Try exact chapter match (e.g., "1.5" for chapter 1)
+        revision_docs = vectorstore.similarity_search(
+            f"revision questions",
+            k=300,
+            filter={"type": "revision", "chapter": revision_chapter}
+        )
+        
+        if not revision_docs:
+            # Fallback: get all revisions and filter by chapter prefix
+            all_revisions = vectorstore.similarity_search(
+                f"chapter {major} questions",
+                k=300,
+                filter={"type": "revision"}
+            )
+            revision_docs = [
+                doc for doc in all_revisions 
+                if doc.metadata.get("chapter", "").startswith(f"{major}.")
+            ]
+    except Exception:
+        revision_docs = []
+    
     content_docs = _fetch_docs_by_root("content", major, k=300)
     if not content_docs:
         content_docs = _fetch_docs_by("content", chapter_query, k=200)
@@ -291,11 +466,14 @@ async def answer_revision_questions_async(chapter_query: str) -> List[dict]:
         async with semaphore:
             return await answer_single_question(q)
     
-    results = await asyncio.gather(*[bounded_question(q) for q in filtered])
-    
-    # Cache result
-    query_cache.set(results, "revision", chapter_query)
-    return results
+    try:
+        results = await asyncio.gather(*[bounded_question(q) for q in filtered])
+        # Cache result
+        query_cache.set(results, "revision", chapter_query)
+        return results
+    finally:
+        if got_lock:
+            query_cache.release_lock("revision", chapter_query)
 
 def answer_revision_questions(chapter_query: str) -> List[dict]:
     """Synchronous wrapper for revision questions."""
@@ -321,19 +499,29 @@ def answer_general_question(user_question: str) -> dict:
     if cached:
         return cached
 
+    got_lock = query_cache.acquire_lock("ask", user_question, lock_ttl=30)
+    if not got_lock:
+        cached2 = query_cache.get("ask", user_question)
+        if cached2:
+            return cached2
+
     prompt = build_prompt_template("unknown")
     combine = create_stuff_documents_chain(llm=llm, prompt=prompt)
     retriever = vectorstore.as_retriever(search_kwargs={"k": 4})  # Reduced from 6
     chain = create_retrieval_chain(retriever=retriever, combine_docs_chain=combine)
 
-    result = chain.invoke({"input": user_question})
-    answer_text = result.get("answer") or result.get("output_text") or str(result)
-    english, swahili = parse_bilingual(answer_text)
-    response = {"english": english, "swahili": swahili}
-    
-    # Cache result
-    query_cache.set(response, "ask", user_question)
-    return response
+    try:
+        result = chain.invoke({"input": user_question})
+        answer_text = result.get("answer") or result.get("output_text") or str(result)
+        english, swahili = parse_bilingual(answer_text)
+        response = {"english": english, "swahili": swahili}
+
+        # Cache result
+        query_cache.set(response, "ask", user_question)
+        return response
+    finally:
+        if got_lock:
+            query_cache.release_lock("ask", user_question)
 
 # Async generator for streaming (future use)
 async def stream_summarize_chapter(chapter_query: str) -> AsyncGenerator[str, None]:
@@ -370,4 +558,4 @@ async def stream_summarize_chapter(chapter_query: str) -> AsyncGenerator[str, No
 
 if __name__ == "__main__":
     docs = _fetch_docs_by("content", "1", 20) + _fetch_docs_by("revision", "1", 20)
-    print(f"✅ Sample docs: {len(docs)}")
+    print(f"Sample docs: {len(docs)}")
