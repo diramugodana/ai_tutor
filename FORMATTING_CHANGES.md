@@ -159,7 +159,7 @@ def ask(data: QuestionInput):
 ```
 
 **Benefits:**
-- ✅ Automatic JSON schema generation (FastAPI Swagger docs)
+-  Automatic JSON schema generation (FastAPI Swagger docs)
 - ✅ Type validation on response
 - ✅ Consistent structure across all modes
 - ✅ Frontend can reliably parse all three endpoint types
