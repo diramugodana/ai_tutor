@@ -7,8 +7,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
-from langchain_pinecone import Pinecone as LangchainPinecone
-from pinecone import Pinecone as PineconeClient
+from langchain_community.vectorstores import Pinecone as LangchainPinecone
+from pinecone import Pinecone
 
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains.retrieval import create_retrieval_chain
@@ -18,38 +18,82 @@ from src.utils.revision_filter import extract_revision_questions
 from src.utils.token_utils import estimate_tokens
 
 # -------- setup --------
+# pinecone_api_key = os.getenv("PINECONE_API_KEY")
+# pinecone_index_name = os.getenv("PINECONE_INDEX_NAME")
+
+# pc = PineconeClient(api_key=pinecone_api_key)
+# pinecone_index = pc.Index(pinecone_index_name)
+
+# embeddings = OpenAIEmbeddings()
+# vectorstore = LangchainPinecone(
+#     index=pinecone_index,
+#     embedding=embeddings,
+#     text_key="page_content"
+# )
+# llm = ChatOpenAI(model="gpt-4-turbo", temperature=0.3)
 pinecone_api_key = os.getenv("PINECONE_API_KEY")
+pinecone_env = os.getenv("PINECONE_ENVIRONMENT") or os.getenv("PINECONE_ENV")
 pinecone_index_name = os.getenv("PINECONE_INDEX_NAME")
 
-pc = PineconeClient(api_key=pinecone_api_key)
-pinecone_index = pc.Index(pinecone_index_name)
+# Validate Pinecone envs early with a helpful error message
+if not (pinecone_api_key and pinecone_env and pinecone_index_name):
+    raise EnvironmentError(
+        "Pinecone configuration missing. Please set PINECONE_API_KEY, PINECONE_ENVIRONMENT (or PINECONE_ENV) and PINECONE_INDEX_NAME in your environment."
+    )
+
+# Initialize Pinecone client and get an Index reference
+try:
+    pc = Pinecone(api_key=pinecone_api_key)
+    pinecone_index = pc.Index(pinecone_index_name)
+except Exception as e:
+    raise RuntimeError(f"Failed to initialize Pinecone client or open index '{pinecone_index_name}': {e}")
 
 embeddings = OpenAIEmbeddings()
+
+# Optional: read namespace from env (for testing or multi-env setups)
+pinecone_namespace = os.getenv("PINECONE_NAMESPACE", "")  # "" = default namespace
+if pinecone_namespace:
+    print(f"ℹ️ Using Pinecone namespace: '{pinecone_namespace}'")
+
 vectorstore = LangchainPinecone(
     index=pinecone_index,
     embedding=embeddings,
-    text_key="page_content"
+    text_key="page_content",
+    namespace=pinecone_namespace if pinecone_namespace else None,  # None = default
 )
-llm = ChatOpenAI(model="gpt-4-turbo", temperature=0.3)
+llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.3)
 
 # ----------------- helpers -----------------
 def parse_bilingual(output_text: str):
+    """
+    Extract English and Swahili from explicit format:
+    ENGLISH:
+    [text]
+    SWAHILI:
+    [text]
+    """
     if not isinstance(output_text, str):
         output_text = output_text.get("output_text") or output_text.get("answer") or str(output_text)
 
     text = output_text.strip()
 
+    # Try parsing explicit ENGLISH:/SWAHILI: format
+    if "ENGLISH:" in text and "SWAHILI:" in text:
+        parts = text.split("SWAHILI:", 1)
+        english = parts[0].replace("ENGLISH:", "").strip()
+        swahili = parts[1].strip() if len(parts) > 1 else ""
+        return english, swahili
+
+    # Fallback: try JSON
     try:
+        import json
         obj = json.loads(text)
         if isinstance(obj, dict) and "english" in obj and "swahili" in obj:
             return obj["english"].strip(), obj["swahili"].strip()
     except Exception:
         pass
 
-    if "🌍" in text:
-        eng, swa = text.split("🌍", 1)
-        return eng.strip(), swa.strip()
-
+    # Last resort: return as-is with fallback
     return text, "(Swahili version not available)"
 
 def _chapter_variants(chapter_query: str):
@@ -131,6 +175,30 @@ def fetch_revision_candidates(chapter_query: str, k_try: int = 400):
         filter={"type": "revision"}
     )
 
+def _clean_question_text(text: str) -> str:
+    """
+    Clean and truncate question text to extract just the question stem.
+    Remove headers, page breaks, excessive whitespace, and limit to ~200 chars.
+    """
+    # Strip leading/trailing whitespace
+    text = (text or "").strip()
+    
+    # Remove page break markers (---, ---, etc)
+    text = re.sub(r"^-+\s*page\s+-+\s*", "", text, flags=re.IGNORECASE)
+    text = re.sub(r"---+", "", text)
+    
+    # Remove common header patterns
+    text = re.sub(r"^(index|chapter|section|part|revision|questions?)[\s:]*", "", text, flags=re.IGNORECASE)
+    
+    # Collapse multiple whitespace/newlines to single space
+    text = re.sub(r"\s+", " ", text)
+    
+    # Truncate to ~200 chars for display (avoid oversized payloads)
+    if len(text) > 200:
+        text = text[:197] + "..."
+    
+    return text.strip()
+
 # ----------------- 1) Summarize Chapter (UNCHANGED) -----------------
 def summarize_chapter(chapter_query: str):
     chapter_docs = fetch_docs_by("content", chapter_query, k=400)
@@ -146,15 +214,14 @@ def summarize_chapter(chapter_query: str):
         token_total += t
 
     if not selected:
-        return [{"english": f"⚠️ No usable content found for Chapter {chapter_query}.", "swahili": ""}]
+        return {"english": f"No usable content found for Chapter {chapter_query}.", "swahili": ""}
 
     prompt = build_summary_prompt(chapter_query)
-    json_guard = "\n\nReturn your final answer strictly as JSON with keys 'english' and 'swahili'."
-    chain = create_stuff_documents_chain(llm=llm, prompt=prompt.partial(instructions=json_guard))
+    chain = create_stuff_documents_chain(llm=llm, prompt=prompt)
     result = chain.invoke({"context": selected})
 
     english, swahili = parse_bilingual(result)
-    return [{"english": english, "swahili": swahili}]
+    return {"english": english, "swahili": swahili}
 
 # ----------------- 2) Answer Revision Questions (FIXED) -----------------
 def answer_revision_questions(chapter_query: str):
@@ -173,7 +240,7 @@ def answer_revision_questions(chapter_query: str):
     seen = set()
     questions = []
     for q in raw_questions:
-        q = (q or "").strip()
+        q = _clean_question_text(q)
         if not q:
             continue
         # keep order, dedupe
@@ -181,7 +248,7 @@ def answer_revision_questions(chapter_query: str):
             seen.add(q)
             questions.append(q)
 
-    # Noise filter (drop obvious headers)
+    # Noise filter (drop obvious headers/short text)
     filtered = []
     for q in questions:
         low = q.lower()
@@ -192,11 +259,10 @@ def answer_revision_questions(chapter_query: str):
         filtered.append(q)
 
     if not filtered:
-        return [{"english": f"⚠️ No usable revision questions found for Chapter {chapter_query}.", "swahili": ""}]
+        return []
 
     prompt = build_prompt_template(chapter_query)
-    json_guard = "\n\nReturn your final answer strictly as JSON with keys 'english' and 'swahili'."
-    chain = create_stuff_documents_chain(llm=llm, prompt=prompt.partial(instructions=json_guard))
+    chain = create_stuff_documents_chain(llm=llm, prompt=prompt)
 
     results = []
     for q in filtered:
@@ -207,25 +273,23 @@ def answer_revision_questions(chapter_query: str):
         out = chain.invoke({"context": relevant, "input": q})
         english, swahili = parse_bilingual(out)
         results.append({
-            "question": f"Question: {q}",
-            "english": english,
-            "swahili": swahili
+            "question_text": q,
+            "answer": {"english": english, "swahili": swahili}
         })
 
     return results
 
-# ----------------- 3) General Q&A (UNCHANGED) -----------------
+# ----------------- 3) General Q&A (UPDATED) -----------------
 def answer_general_question(user_question: str):
     prompt = build_prompt_template("unknown")
-    json_guard = "\n\nReturn your final answer strictly as JSON with keys 'english' and 'swahili'."
-    combine = create_stuff_documents_chain(llm=llm, prompt=prompt.partial(instructions=json_guard))
+    combine = create_stuff_documents_chain(llm=llm, prompt=prompt)
     retriever = vectorstore.as_retriever(search_kwargs={"k": 6})
     chain = create_retrieval_chain(retriever=retriever, combine_docs_chain=combine)
 
     result = chain.invoke({"input": user_question})
     answer_text = result.get("answer") or result.get("output_text") or str(result)
     english, swahili = parse_bilingual(answer_text)
-    return [{"english": english, "swahili": swahili, "question": f"Question: {user_question}"}]
+    return {"english": english, "swahili": swahili}
 
 if __name__ == "__main__":
     docs = fetch_docs_by("content", "1", 20) + fetch_docs_by("revision", "1", 20)

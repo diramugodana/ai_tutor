@@ -103,7 +103,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from langchain_openai import OpenAIEmbeddings
-from langchain_pinecone import PineconeVectorStore
+from langchain_community.vectorstores import Pinecone
 from pinecone import Pinecone as PineconeClient
 from pinecone.exceptions.exceptions import NotFoundException
 
@@ -232,12 +232,14 @@ def main():
     print(f"🚀 Upserting {len(all_texts)} vectors to index '{PINECONE_INDEX_NAME}' in namespace '{NAMESPACE or '(default)'}' ...")
 
     # Build a VectorStore wrapper and upsert embeddings in batches
-    vectorstore = PineconeVectorStore(
-        index=pinecone_index,
-        embedding=embeddings,
-        text_key="page_content",  # matches your ai_engine.py usage
-        namespace=NAMESPACE or None,
-    )
+    vectorstore = Pinecone(
+    index=pinecone_index,
+    embedding=embeddings,
+    text_key="page_content",
+    namespace=NAMESPACE or None,
+)
+
+
 
     # LangChain handles batching inside add_texts
     vectorstore.add_texts(texts=all_texts, metadatas=all_metas, ids=all_ids)

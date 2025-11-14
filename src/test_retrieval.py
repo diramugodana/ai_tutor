@@ -5,8 +5,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
-from langchain_pinecone import Pinecone as LangchainPinecone
-from pinecone import Pinecone as PineconeClient
+from langchain_community.vectorstores import Pinecone as LangchainPinecone
+from pinecone import Pinecone
+
 
 from langchain.chains.retrieval_qa.base import RetrievalQA
 

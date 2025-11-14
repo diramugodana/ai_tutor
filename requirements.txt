@@ -1,12 +1,31 @@
-openai
-langchain
-langchain-openai
-langchainhub
-chromadb
-python-dotenv
-tiktoken
-streamlit
-Pillow
-langchain-community
-langchain_chroma
-pinecone
+# --- Stable LangChain 0.3 line ---
+openai==1.60.1
+langchain==0.3.9
+langchain-openai==0.3.2
+langchainhub==0.1.21
+langchain-community==0.3.8
+# langchain-chroma pinned removed due to compatibility with langchain 0.3.x
+# If you need chroma integration, pick a langchain-chroma version compatible with
+# langchain==0.3.9 (or remove the dedicated package and use langchain's built-in adapters).
+
+# --- Vector DB / storage ---
+pinecone-client==4.1.1
+
+# --- Utilities ---
+python-dotenv==1.0.1
+tiktoken==0.8.0
+Pillow==10.4.0
+fastapi==0.115.0
+uvicorn==0.38.0
+
+# --- Compatibility pins for Py3.12 (all binary wheels exist) ---
+aiohttp==3.13.2
+numpy==1.26.4
+SQLAlchemy==2.0.35
+pydantic==2.12.3
+PyYAML==6.0.3
+tenacity==9.1.2
+requests==2.32.5
+starlette==0.37.2
+packaging==24.2
+types-requests==2.32.4.20250913
