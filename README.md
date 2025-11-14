@@ -132,4 +132,4 @@ These keep the main README focused and concise while providing deeper operationa
 MIT License
 
 ## Author
-Developed by Diramu Kana Godana for academic and educational research purposes.
+Developed by Diramu Kana Godana for internship and research purposes.
