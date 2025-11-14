@@ -61,3 +61,43 @@ ehthumbs.db
 
 # === LEGACY STREAMLIT ===
 .streamlit/
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.eggs/
+*.egg-info/
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+dist/
+.pnp.cjs
+.pnp.loader.mjs
+.turbo/
+.vercel/
+
+# Env
+.env
+.env.*        # e.g. .env.local, .env.production
+frontend/.env
+frontend/.env.*
+backend/.env
+backend/.env.*
+
+# macOS
+.DS_Store
+
+# Not for source control (local or heavy)
+data/raw_pdfs/
+vector_db/
+src/vector_db/
+*.sqlite3
+
+# Caches
+.cache/
+.pytest_cache/
+.ipynb_checkpoints/
