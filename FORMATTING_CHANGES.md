@@ -1,11 +1,11 @@
 # Output Formatting - Structured Response Schema
 
 ## Overview
-Implemented consistent, structured response format across all three endpoints (`/summarize`, `/revision`, `/ask`) to provide clean, user-friendly output for frontend consumption.
+This document describes the implementation of consistent, structured response formats across all three API endpoints (`/summarize`, `/revision`, `/ask`). These changes provide clean, type-safe output for frontend consumption and improve overall system maintainability.
 
 ## Changes Made
 
-### 1. **Updated Response Schemas** (`backend/app/schemas.py`)
+### 1. Updated Response Schemas (`backend/app/schemas.py`)
 
 Added 5 new Pydantic models for structured responses:
 
@@ -88,7 +88,7 @@ class AskResponse(BaseModel):
 
 ---
 
-### 2. **Enhanced Question Cleaning** (`src/ai_engine.py`)
+### 2. Enhanced Question Cleaning (`src/ai_engine.py`)
 
 Added `_clean_question_text()` helper function to normalize and truncate question text:
 - Removes page break markers (`---`, `--- PAGE ---`, etc.)
@@ -97,21 +97,21 @@ Added `_clean_question_text()` helper function to normalize and truncate questio
 - Truncates oversized questions to ~200 characters
 - Extracts clean question stem (not raw multiline dumps)
 
-**Before (Mode 2):**
+**Before:**
 ```
 "--- PAGE BREAK ---
 CHAPTER 1: REVISION QUESTIONS
 Question 1: What are the main components of a cell? List them and describe each in detail..."
 ```
 
-**After (Mode 2):**
+**After:**
 ```
 "What are the main components of a cell? List them and describe..."
 ```
 
 ---
 
-### 3. **Refactored AI Engine Functions** (`src/ai_engine.py`)
+### 3. Refactored AI Engine Functions (`src/ai_engine.py`)
 
 #### `summarize_chapter(chapter_query)`
 - **Before:** Returned list: `[{"english": "...", "swahili": "..."}]`
@@ -128,7 +128,7 @@ Question 1: What are the main components of a cell? List them and describe each 
 
 ---
 
-### 4. **Updated API Routes** (`backend/app/routes.py`)
+### 4. Updated API Routes (`backend/app/routes.py`)
 
 Each endpoint now wraps the AI engine response in the proper Pydantic model:
 
@@ -159,10 +159,10 @@ def ask(data: QuestionInput):
 ```
 
 **Benefits:**
--  Automatic JSON schema generation (FastAPI Swagger docs)
-- ✅ Type validation on response
-- ✅ Consistent structure across all modes
-- ✅ Frontend can reliably parse all three endpoint types
+- Automatic JSON schema generation (FastAPI Swagger docs)
+- Type validation on response
+- Consistent structure across all modes
+- Frontend can reliably parse all three endpoint types
 
 ---
 
@@ -172,7 +172,7 @@ def ask(data: QuestionInput):
 |--------|--------|-------|
 | **Response Format** | Inconsistent (lists vs dicts, generic labels) | Consistent structured Pydantic models |
 | **Revision Questions** | Raw multiline text (oversized payloads) | Clean, truncated to ~200 chars |
-| **Swahili Label** | Generic "🇰🇪 Swahili Answer" | Consistent `swahili` field in `BilingualResponse` |
+| **Swahili Label** | Generic labels | Consistent `swahili` field in `BilingualResponse` |
 | **Type Safety** | Untyped dicts | Full Pydantic type checking |
 | **Frontend Parsing** | Required custom logic for each mode | Single schema per endpoint type |
 | **OpenAPI Documentation** | Manual schema descriptions | Auto-generated from Pydantic models |
@@ -201,7 +201,7 @@ Expected output shows all three response formats with proper structure and bilin
 
 ## Files Modified
 
-- ✅ `backend/app/schemas.py` — Added 5 new response models
-- ✅ `src/ai_engine.py` — Added question cleaning, updated 3 main functions
-- ✅ `backend/app/routes.py` — Updated 3 endpoints to return structured responses
-- ✅ `test_output_format.py` — Created validation test (new file)
+- `backend/app/schemas.py` — Added 5 new response models
+- `src/ai_engine.py` — Added question cleaning, updated 3 main functions
+- `backend/app/routes.py` — Updated 3 endpoints to return structured responses
+- `test_output_format.py` — Created validation test (new file)

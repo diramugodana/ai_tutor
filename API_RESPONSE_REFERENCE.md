@@ -1,5 +1,9 @@
 # API Response Format Reference
 
+## Overview
+
+This document describes the structured response format for all three API endpoints. Each endpoint returns a consistent, type-safe JSON structure with bilingual content (English and Swahili).
+
 ## Quick Reference - All Three Endpoints
 
 ### 1. `/summarize` POST
@@ -123,7 +127,7 @@ If Swahili generation fails or is unavailable:
 If no content/questions found:
 - Response will be returned as normal but with empty `questions` array or notice in `english` field
 - HTTP status will still be 200 (successful API call with no results)
-- Add frontend validation to check for empty `questions` or handle gracefully
+- Frontend should validate and handle empty `questions` arrays appropriately
 
 ---
 

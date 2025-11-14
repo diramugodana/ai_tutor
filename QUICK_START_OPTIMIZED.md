@@ -1,11 +1,11 @@
 # Quick Start: Running the Optimized Backend
 
-## TL;DR - Fast Start
+## Fast Start
 ```bash
 # Terminal 1: Start optimized backend (with performance improvements)
 python -m uvicorn backend.main_optimized:app --reload
 
-# Terminal 2: Start React frontend
+# Terminal 2: Start frontend
 cd frontend
 npm run dev
 
@@ -15,18 +15,18 @@ python benchmark_performance.py
 
 ---
 
-## What Changed?
+## What Changed
 
-### ✅ New Optimized Version (Recommended)
-- **25-70% faster** initial responses
-- **100-150x faster** for repeated queries (cached)
-- **3x faster** revision questions (parallel processing)
-- **Free cache management** endpoints
-- **Built-in performance monitoring**
+### New Optimized Version (Recommended)
+- 25-70% faster initial responses
+- 100-150x faster for repeated queries (cached)
+- 3x faster revision questions (parallel processing)
+- Cache management endpoints
+- Built-in performance monitoring
 
-### 📦 Original Version (Still Works)
+### Original Version (Still Available)
 ```bash
-# If you prefer the original, still available:
+# Original backend remains available
 python -m uvicorn backend.main:app --reload
 ```
 
@@ -34,27 +34,27 @@ python -m uvicorn backend.main:app --reload
 
 ## Starting the Backend
 
-### Option 1: Optimized (Recommended for Production)
+### Option 1: Optimized (Recommended)
 ```bash
 python -m uvicorn backend.main_optimized:app --reload --host 0.0.0.0 --port 8000
 ```
 
-**Benefits:**
-- ✓ Query caching (10 min TTL)
-- ✓ Parallel revision processing
-- ✓ GZIP compression
-- ✓ Response timing headers
-- ✓ Cache management endpoints
+**Features:**
+- Query caching (10 min TTL)
+- Parallel revision processing
+- GZIP compression
+- Response timing headers
+- Cache management endpoints
 
 ### Option 2: Original
 ```bash
 python -m uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-**Benefits:**
-- ✓ Simpler implementation
-- ✓ No external dependencies
-- ✓ Works exactly as before
+**Features:**
+- Simpler implementation
+- No external dependencies
+- Identical to previous behavior
 
 ---
 
@@ -201,7 +201,7 @@ watch -n 1 'curl -s http://localhost:8000/cache/stats | jq .'
 ```
 
 ### Visualize Performance
-Add to React component:
+Example component implementation:
 ```javascript
 const [responseTime, setResponseTime] = useState(0);
 const [isCached, setIsCached] = useState(false);
@@ -222,9 +222,9 @@ const handleQuery = async (query) => {
 return (
   <div>
     {isCached ? (
-      <span style={{ color: 'green' }}>⚡ {responseTime.toFixed(0)}ms (cached)</span>
+      <span style={{ color: 'green' }}>{responseTime.toFixed(0)}ms (cached)</span>
     ) : (
-      <span style={{ color: 'orange' }}>⏳ {responseTime.toFixed(0)}ms (fresh)</span>
+      <span style={{ color: 'orange' }}>{responseTime.toFixed(0)}ms (fresh)</span>
     )}
   </div>
 );

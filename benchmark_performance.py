@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Performance comparison script: Original vs Optimized backend.
-Tests the same queries on both implementations to show latency improvements.
+Tests the same queries on both implementations to measure latency improvements.
 """
 
 import os
@@ -30,11 +30,11 @@ start = time.time()
 try:
     result1 = original_summarize("1")
     time1 = time.time() - start
-    print(f"✓ Completed in {time1:.2f}s")
+    print(f"Completed in {time1:.2f}s")
     print(f"  English preview: {result1['english'][:100]}...")
 except Exception as e:
     time1 = None
-    print(f"✗ Error: {e}")
+    print(f"Error: {e}")
 
 # Optimized version (first time - no cache)
 print("\n[OPTIMIZED-FIRST] Fetching summary (cold cache)...")
@@ -42,11 +42,11 @@ start = time.time()
 try:
     result2 = optimized_summarize("1")
     time2 = time.time() - start
-    print(f"✓ Completed in {time2:.2f}s")
+    print(f"Completed in {time2:.2f}s")
     print(f"  English preview: {result2['english'][:100]}...")
 except Exception as e:
     time2 = None
-    print(f"✗ Error: {e}")
+    print(f"Error: {e}")
 
 # Optimized version (second time - cached)
 print("\n[OPTIMIZED-CACHED] Fetching summary (warm cache)...")
@@ -54,10 +54,10 @@ start = time.time()
 try:
     result3 = optimized_summarize("1")
     time3 = time.time() - start
-    print(f"✓ Completed in {time3:.2f}s")
+    print(f"Completed in {time3:.2f}s")
 except Exception as e:
     time3 = None
-    print(f"✗ Error: {e}")
+    print(f"Error: {e}")
 
 # Summary
 print("\n" + "-" * 70)
@@ -89,10 +89,10 @@ start = time.time()
 try:
     resp1 = original_ask(question)
     time1 = time.time() - start
-    print(f"✓ Completed in {time1:.2f}s")
+    print(f"Completed in {time1:.2f}s")
 except Exception as e:
     time1 = None
-    print(f"✗ Error: {e}")
+    print(f"Error: {e}")
 
 # Optimized (first)
 print(f"\n[OPTIMIZED-FIRST] Question: '{question}' (cold cache)")
@@ -100,10 +100,10 @@ start = time.time()
 try:
     resp2 = optimized_ask(question)
     time2 = time.time() - start
-    print(f"✓ Completed in {time2:.2f}s")
+    print(f"Completed in {time2:.2f}s")
 except Exception as e:
     time2 = None
-    print(f"✗ Error: {e}")
+    print(f"Error: {e}")
 
 # Optimized (cached)
 print(f"\n[OPTIMIZED-CACHED] Question: '{question}' (warm cache)")
@@ -111,10 +111,10 @@ start = time.time()
 try:
     resp3 = optimized_ask(question)
     time3 = time.time() - start
-    print(f"✓ Completed in {time3:.4f}s")
+    print(f"Completed in {time3:.4f}s")
 except Exception as e:
     time3 = None
-    print(f"✗ Error: {e}")
+    print(f"Error: {e}")
 
 print("\n" + "-" * 70)
 print("ASK RESULTS:")
@@ -149,10 +149,10 @@ Key Findings:
    - Max 5 concurrent to avoid rate limiting
 
 Recommendation:
-✓ Deploy optimized backend immediately
-✓ Cache will grow over time (most queries repeated)
-✓ Monitor cache hit rate in production
-✓ Consider persistent Redis cache if scaling to multiple servers
+- Deploy optimized backend immediately
+- Cache will grow over time (most queries repeated)
+- Monitor cache hit rate in production
+- Consider persistent Redis cache if scaling to multiple servers
 """)
 
 print("=" * 70)
